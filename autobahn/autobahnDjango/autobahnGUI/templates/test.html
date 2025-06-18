@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h1>Hello World!</h1>
+<p>Welcome to my first Django project!</p>
+
+</body>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" name="button_start" value="1">start</button>
+
+</form>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" name="button_pause" value="1">pause</button>
+    
+</form>
+</html>

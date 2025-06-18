@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Dashboard</title>
+</head>
+<body>
+    <h1>Live Counter: <span id="counter">0</span></h1>
+    <script>
+        const counterElement = document.getElementById('counter');
+        const socket = new WebSocket(
+            'ws://' + window.location.host + '/ws/dashboard/'
+        );
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            counterElement.textContent = data.counter;
+        };
+        socket.onopen = function(e) {
+            console.log("WebSocket verbunden.");
+        }
+        socket.onclose = function(e) {
+            console.error("WebSocket getrennt.");
+        }
+    </script>
+</body>
+</html>
