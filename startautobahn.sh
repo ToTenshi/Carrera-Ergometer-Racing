@@ -1,18 +1,41 @@
 #!/bin/bash
 
-# Zum Django-Projektverzeichnis wechseln
+function check_error {
+    if [ $1 -ne 0 ]; then
+        echo "Fehler: $2"
+        if [ -n "$3" ] && [ -f "$3" ]; then
+            echo "Letzte Zeilen von $3:"
+            tail -n 10 "$3"
+        fi
+        exit 1
+    fi
+}
+
+# Pfad zu deiner virtuellen Umgebung
+VENV_PATH="/home/pi/autobahntobi/autobahn"
+
 cd /home/pi/autobahntobi/autobahn/autobahnDjango
-#python manage.py run_counter &
+check_error $? "Wechsel ins Django-Verzeichnis fehlgeschlagen."
+
+echo "Aktiviere virtuelle Umgebung"
+source "$VENV_PATH/bin/activate"
+check_error $? "Aktivierung der virtuellen Umgebung fehlgeschlagen."
+
 echo "start realtime script"
-nohup python manage.py run_counter > counter.log 2>&1 &
+python manage.py run_counter > counter.log 2>&1 &
+check_error $? "Starten des run_counter Skripts fehlgeschlagen." "counter.log"
 
-# Daphne (falls auch im gleichen Verzeichnis oder CD vorher ausführen)
 echo "start Frontend"
-nohup daphne -b 0.0.0.0 -p 8000 autobahnDjango.asgi:application > daphne.log 2>&1 & 
+daphne -b 0.0.0.0 -p 8000 autobahnDjango.asgi:application > daphne.log 2>&1 &
+check_error $? "Starten von Daphne fehlgeschlagen." "daphne.log"
 
-# Zum Backend-Pfad wechseln und Skript starten
 cd /home/pi/autobahntobi
+check_error $? "Wechsel ins Backend-Verzeichnis fehlgeschlagen."
+
 echo "start backend"
+python3 backend.py > backend.log 2>&1 &
+check_error $? "Starten von backend.py fehlgeschlagen." "backend.log"
 
-nohup python3 'backend.py' > backend.log 2>&1 &
+echo "Alle Dienste wurden erfolgreich gestartet."
 
+wait
