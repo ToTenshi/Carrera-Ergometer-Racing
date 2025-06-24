@@ -13,6 +13,6 @@ class DashboardConsumer(AsyncWebsocketConsumer):
     async def dashboard_update(self, event):
         await self.send(text_data=json.dumps({
             'counter': event['counter'],
+            'speed0': event['speed0'],
             'speed1': event['speed1'],
-            'speed2': event['speed2'],
         }))

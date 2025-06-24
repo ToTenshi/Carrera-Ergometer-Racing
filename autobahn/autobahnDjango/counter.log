@@ -1,0 +1,60 @@
+Traceback (most recent call last):
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/redis/connection.py", line 357, in connect
+    sock = self.retry.call_with_retry(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/redis/retry.py", line 62, in call_with_retry
+    return do()
+           ^^^^
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/redis/connection.py", line 358, in <lambda>
+    lambda: self._connect(), lambda error: self.disconnect(error)
+            ^^^^^^^^^^^^^^^
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/redis/connection.py", line 730, in _connect
+    raise err
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/redis/connection.py", line 718, in _connect
+    sock.connect(socket_address)
+ConnectionRefusedError: [Errno 111] Connection refused
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/pi/autobahntobi/autobahn/autobahnDjango/manage.py", line 22, in <module>
+    main()
+  File "/home/pi/autobahntobi/autobahn/autobahnDjango/manage.py", line 18, in main
+    execute_from_command_line(sys.argv)
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/django/core/management/__init__.py", line 442, in execute_from_command_line
+    utility.execute()
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/django/core/management/__init__.py", line 436, in execute
+    self.fetch_command(subcommand).run_from_argv(self.argv)
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/django/core/management/base.py", line 413, in run_from_argv
+    self.execute(*args, **cmd_options)
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/django/core/management/base.py", line 459, in execute
+    output = self.handle(*args, **options)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/autobahntobi/autobahn/autobahnDjango/autobahnGUI/management/commands/run_counter.py", line 44, in handle
+    asyncio.run(self.count())
+  File "/usr/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/asyncio/base_events.py", line 653, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/home/pi/autobahntobi/autobahn/autobahnDjango/autobahnGUI/management/commands/run_counter.py", line 21, in count
+    speed1 = r.get("speed0")
+             ^^^^^^^^^^^^^^^
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/redis/commands/core.py", line 1822, in get
+    return self.execute_command("GET", name, keys=[name])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/redis/client.py", line 559, in execute_command
+    return self._execute_command(*args, **options)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/redis/client.py", line 565, in _execute_command
+    conn = self.connection or pool.get_connection(command_name, **options)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/redis/connection.py", line 1422, in get_connection
+    connection.connect()
+  File "/home/pi/autobahntobi/autobahn/lib/python3.11/site-packages/redis/connection.py", line 363, in connect
+    raise ConnectionError(self._error_message(e))
+redis.exceptions.ConnectionError: Error 111 connecting to localhost:6379. Connection refused.

@@ -11,22 +11,22 @@ class Command(BaseCommand):
     async def count(self):
         channel_layer = get_channel_layer()
         counter = 0
+        speed0 = 0
         speed1 = 0
-        speed2 = 0
         while True:
             counter += 1
             #speed1 = 0 #r.get("speed1")
             #speed2 = 0 #r.get("speed2")
 
-            speed1 = r.get("speed1")
+            speed1 = r.get("speed0")
             if speed1 is not None:
                 speed1 = speed1.decode("utf-8")
-                print("speed1", speed1)
+                print("speed0", speed0)
 
-            speed2 = r.get("speed2")
+            speed2 = r.get("speed1")
             if speed2 is not None:
                 speed2 = speed2.decode("utf-8")
-                print("speed2", speed2)
+                print("speed1", speed1)
 
 
             await channel_layer.group_send(
@@ -34,8 +34,8 @@ class Command(BaseCommand):
                 {
                     "type": "dashboard.update",
                     "counter": counter,
+                    "speed0": speed0,
                     "speed1": speed1,
-                    "speed2": speed2,
                 }
             )
             await asyncio.sleep(0.1)
