@@ -29,7 +29,7 @@ echo "start Frontend"
 daphne -b 0.0.0.0 -p 8000 autobahnDjango.asgi:application > daphne.log 2>&1 &
 check_error $? "Starten von Daphne fehlgeschlagen." "daphne.log"
 
-cd /home/pi/autobahntobi
+cd /home/pi/autobahntobi/autobahn
 check_error $? "Wechsel ins Backend-Verzeichnis fehlgeschlagen."
 
 echo "start backend"
