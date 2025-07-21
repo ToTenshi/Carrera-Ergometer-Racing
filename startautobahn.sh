@@ -11,10 +11,13 @@ function check_error {
     fi
 }
 
-# Pfad zu deiner virtuellen Umgebung
-VENV_PATH="/home/pi/autobahntobi/autobahn"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+VENV_NAME="autobahnVenv"
 
-cd /home/pi/autobahntobi/autobahn/autobahnDjango
+# Pfad zu deiner virtuellen Umgebung
+VENV_PATH="$SCRIPT_DIR/$VENV_NAME"
+
+cd $VENV_PATH/autobahnDjango
 check_error $? "Wechsel ins Django-Verzeichnis fehlgeschlagen."
 
 echo "Aktiviere virtuelle Umgebung"
@@ -29,7 +32,7 @@ echo "start Frontend"
 daphne -b 0.0.0.0 -p 8000 autobahnDjango.asgi:application > daphne.log 2>&1 &
 check_error $? "Starten von Daphne fehlgeschlagen." "daphne.log"
 
-cd /home/pi/autobahntobi/autobahn
+cd $VENV_PATH
 check_error $? "Wechsel ins Backend-Verzeichnis fehlgeschlagen."
 
 echo "start backend"
