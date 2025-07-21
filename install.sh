@@ -84,7 +84,7 @@ source "$VENV_NAME/bin/activate"
 
 echo "3. Pip aktualisieren und Django, Redis und rpi-lgpio installieren..."
 pip install --upgrade pip
-pip install django redis rpi-lgpio
+pip install django redis rpi-lgpio daphne
 
 echo "4. Ordner wird in die virtuelle Umgebung verschoben..."
 
