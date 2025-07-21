@@ -149,4 +149,8 @@ echo "Der Dienst wurde aktiviert und gestartet."
 echo "Status kannst du prüfen mit:"
 echo "  sudo systemctl status $SERVICENAME"
 
+echo "Setze Ausführungsrechte für uninstall.sh und startautobahn.sh..."
+chmod +x "$SCRIPT_DIR/uninstall.sh"
+chmod +x "$SCRIPT_DIR/startautobahn.sh"
+
 echo "Fertig!"
