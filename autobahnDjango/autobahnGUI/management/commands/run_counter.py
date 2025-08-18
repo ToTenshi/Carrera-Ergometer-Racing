@@ -18,14 +18,14 @@ class Command(BaseCommand):
             #speed1 = 0 #r.get("speed1")
             #speed2 = 0 #r.get("speed2")
 
-            speed1 = r.get("speed0")
-            if speed1 is not None:
-                speed1 = speed1.decode("utf-8")
+            speed0 = r.get("speed0")
+            if speed0 is not None:
+                speed0 = speed0.decode("utf-8")
                 print("speed0", speed0)
 
-            speed2 = r.get("speed1")
-            if speed2 is not None:
-                speed2 = speed2.decode("utf-8")
+            speed1 = r.get("speed1")
+            if speed1 is not None:
+                speed1 = speed1.decode("utf-8")
                 print("speed1", speed1)
 
 
