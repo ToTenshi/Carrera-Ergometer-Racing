@@ -84,7 +84,7 @@ source "$VENV_NAME/bin/activate" || echo "Warnung: Konnte venv nicht aktivieren"
 
 echo "3. Pip aktualisieren und Django, Redis und rpi-lgpio installieren..."
 pip install --upgrade pip      || echo "Warnung: pip upgrade fehlgeschlagen"
-pip install django redis rpi-lgpio daphne channels \
+pip install django redis rpi-lgpio daphne channels channels_redis \
     || echo "Warnung: Pakete konnten nicht installiert werden"
 
 echo "4. Ordner wird in die virtuelle Umgebung verschoben..."
