@@ -5,7 +5,7 @@ from django.http import StreamingHttpResponse
 from django.shortcuts import render
 
 r = redis.Redis(host='localhost', port=6379, db=0)
-
+controlkey = "startStop"
 
 from django.shortcuts import render
 
@@ -15,15 +15,8 @@ def dashboard_view(request):
 def controlbuttons(request):
     if request.method == "POST":
         action = request.POST.get("action")
-        if action == "start":
-            message = "Das System wurde gestartet."
-        elif action == "pause":
-            message = "Das System wurde pausiert."
-        elif action == "stop":
-            message = "Das System wurde gestoppt."
-        else:
-            message = "Unbekannte Aktion."
-        
-        return render(request, "GUI.html", {"message": message})
-    
-    return render(request, "GUI.html")
+        if action in ["start", "pause", "stop"]:
+            r.set(controlkey, action)
+        # else: Du kannst hier ggf. eine Fehlermeldung loggen, musst aber nichts im Template ausgeben.
+
+    return render(request, "dashboard.html")

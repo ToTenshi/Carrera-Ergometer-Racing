@@ -14,7 +14,7 @@
             <label for="runden" class="form-label">Rundenanzahl:</label>
             <input type="number" id="runden" class="form-control w-25 mx-auto" min="1" value="1">
         </div>
-        <form method="post" action="{% url 'controlbuttons' %}
+        <form method="post" action="{% url 'controlbuttons' %}">
             {% csrf_token %}
             <div class="my-3">
                 <button type="submit" name="action" value="start" class="btn btn-success">Start</button>
