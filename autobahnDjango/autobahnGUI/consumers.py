@@ -11,8 +11,10 @@ class DashboardConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard("dashboard", self.channel_name)
 
     async def dashboard_update(self, event):
+        # speed0, speed1, round0 und round1 an den Client senden
         await self.send(text_data=json.dumps({
-            'counter': event['counter'],
             'speed0': event['speed0'],
             'speed1': event['speed1'],
+            'round0': event['round0'],
+            'round1': event['round1'],
         }))
