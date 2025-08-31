@@ -35,6 +35,8 @@ lane0_last_pulse_time = time.time()
 lane1_last_pulse_time = time.time()
 lane0_bike_speed = 0
 lane1_bike_speed = 0
+rounds0 = 0
+rounds1 = 0
 rstart_stop = "start"
 
 # GPIO Setup
@@ -98,10 +100,12 @@ def bike1_callback(channel):
 
 def ir0_callback(channel):
     if GPIO.input(channel):
+        rounds0 -= 1
         print("IR0-Signal erkannt!")
 
 def ir1_callback(channel):
     if GPIO.input(channel):
+        rounds1 -= 1
         print("IR1-Signal erkannt!")
 
 def set_redis(key, value):
@@ -131,6 +135,8 @@ try:
         if rstart_stop == "pause":
             lane0.ChangeDutyCycle(0)  # Geschwindigkeit auf 0 setzen
             lane1.ChangeDutyCycle(0)
+            rounds0 = get_redis("rounds0")
+            rounds1 = get_redis("rounds1")
             continue
 
         # Handle deceleration
