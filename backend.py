@@ -137,8 +137,13 @@ try:
         if rstart_stop == "pause":
             lane0.ChangeDutyCycle(0)  # Geschwindigkeit auf 0 setzen
             lane1.ChangeDutyCycle(0)
-            rounds0 = get_redis("rounds")
-            rounds1 = get_redis("rounds")
+            lane0_bike_speed = 0
+            lane1_bike_speed = 0
+            rounds0 = get_redis("rounds0")
+            rounds1 = get_redis("rounds1")
+            set_redis("speed0", 0)
+            set_redis("speed1", 0)
+            sleep(0.1)
             continue
 
         # Handle deceleration
