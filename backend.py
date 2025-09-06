@@ -37,6 +37,9 @@ lane0_bike_speed = 0
 lane1_bike_speed = 0
 rounds0 = 0
 rounds1 = 0
+ir0_last_round_time = 0
+ir1_last_round_time = 0
+ROUND_DEBOUNCE_TIME = 1.0  # mindestens 1 Sekunde zwischen Runden
 rstart_stop = "start"
 
 # GPIO Setup
@@ -69,46 +72,56 @@ def measure_time(previous_time):
     return round(time.time() - previous_time, 3)
 
 def bike0_callback(channel):
-    """Handle bike 0 pulse detection."""
-    global lane0_last_pulse_time, lane0_bike_speed
-    current_time = time.time()
-    if current_time - lane0_last_pulse_time >= DEBOUNCE_TIME:
-        pulse_distance = measure_time(lane0_last_pulse_time)
-        lane0_last_pulse_time = current_time
-        
-        # New formula for smoother speed increase
-        lane0_bike_speed = round((1 / pulse_distance) * LANE0_MULTIPLICATOR * 10, 2)
-        if lane0_bike_speed > SPEED_LIMIT:
-            lane0_bike_speed = SPEED_LIMIT
-        set_redis("speed0", lane0_bike_speed)
-        #print("Bike 0 speed updated:", lane0_bike_speed)
+    if rstart_stop != "pause":
+        """Handle bike 0 pulse detection."""
+        global lane0_last_pulse_time, lane0_bike_speed
+        current_time = time.time()
+        if current_time - lane0_last_pulse_time >= DEBOUNCE_TIME:
+            pulse_distance = measure_time(lane0_last_pulse_time)
+            lane0_last_pulse_time = current_time
+            
+            # New formula for smoother speed increase
+            lane0_bike_speed = round((1 / pulse_distance) * LANE0_MULTIPLICATOR * 10, 2)
+            if lane0_bike_speed > SPEED_LIMIT:
+                lane0_bike_speed = SPEED_LIMIT
+            set_redis("speed0", lane0_bike_speed)
+            #print("Bike 0 speed updated:", lane0_bike_speed)
 
 def bike1_callback(channel):
-    """Handle bike 1 pulse detection."""
-    global lane1_last_pulse_time, lane1_bike_speed
-    current_time = time.time()
-    if current_time - lane1_last_pulse_time >= DEBOUNCE_TIME:
-        pulse_distance = measure_time(lane1_last_pulse_time)
-        lane1_last_pulse_time = current_time
-        
-        # New formula for smoother speed increase
-        lane1_bike_speed = round((1 / pulse_distance) * LANE1_MULTIPLICATOR * 10, 2)
-        if lane1_bike_speed > SPEED_LIMIT:
-            lane1_bike_speed = SPEED_LIMIT
-        set_redis("speed1", lane1_bike_speed)
-        #print("Bike 1 speed updated:", lane1_bike_speed)
+    if rstart_stop != "pause":
+        """Handle bike 1 pulse detection."""
+        global lane1_last_pulse_time, lane1_bike_speed
+        current_time = time.time()
+        if current_time - lane1_last_pulse_time >= DEBOUNCE_TIME:
+            pulse_distance = measure_time(lane1_last_pulse_time)
+            lane1_last_pulse_time = current_time
+            
+            # New formula for smoother speed increase
+            lane1_bike_speed = round((1 / pulse_distance) * LANE1_MULTIPLICATOR * 10, 2)
+            if lane1_bike_speed > SPEED_LIMIT:
+                lane1_bike_speed = SPEED_LIMIT
+            set_redis("speed1", lane1_bike_speed)
+            #print("Bike 1 speed updated:", lane1_bike_speed)
 
 def ir0_callback(channel):
-    global rounds0
+    global rounds0, ir0_last_round_time
+    current_time = time.time()
     if GPIO.input(channel):
-        rounds0 -= 1
-        set_redis("rounds0", rounds0)
+        if current_time - ir0_last_round_time > ROUND_DEBOUNCE_TIME:
+            rounds0 = int(rounds0)
+            rounds0 -= 1   # oder +=1, je nach Zählerlogik
+            ir0_last_round_time = current_time
+            set_redis("rounds0", rounds0)
 
 def ir1_callback(channel):
-    global rounds1
+    global rounds1, ir1_last_round_time
+    current_time = time.time()
     if GPIO.input(channel):
-        rounds1 -= 1
-        set_redis("rounds1", rounds1)
+        if current_time - ir1_last_round_time > ROUND_DEBOUNCE_TIME:
+            rounds1 = int(rounds1)
+            rounds1 -= 1   # oder +=1, je nach Zählerlogik
+            ir1_last_round_time = current_time
+            set_redis("rounds1", rounds1)
 
 def set_redis(key, value):
     """Set value in Redis."""
@@ -126,8 +139,8 @@ set_redis("startStop", "start")
 # Event Detection
 GPIO.add_event_detect(PIN_BIKE0, GPIO.FALLING, callback=bike0_callback, bouncetime=50)
 GPIO.add_event_detect(PIN_BIKE1, GPIO.FALLING, callback=bike1_callback, bouncetime=50)
-GPIO.add_event_detect(IR_SENSOR0, GPIO.BOTH, callback=ir0_callback, bouncetime=10)
-GPIO.add_event_detect(IR_SENSOR1, GPIO.BOTH, callback=ir1_callback, bouncetime=10)
+GPIO.add_event_detect(IR_SENSOR0, GPIO.BOTH, callback=ir0_callback)
+GPIO.add_event_detect(IR_SENSOR1, GPIO.BOTH, callback=ir1_callback)
 
 # Main Loop
 try:
@@ -141,6 +154,7 @@ try:
             lane1_bike_speed = 0
             rounds0 = get_redis("rounds0")
             rounds1 = get_redis("rounds1")
+            print("pause autobahn rounds set to", rounds0, "and", rounds1)
             set_redis("speed0", 0)
             set_redis("speed1", 0)
             sleep(0.1)

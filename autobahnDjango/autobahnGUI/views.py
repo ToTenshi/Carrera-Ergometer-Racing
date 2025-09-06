@@ -6,8 +6,8 @@ from django.shortcuts import render
 
 r = redis.Redis(host='localhost', port=6379, db=0)
 controlkey = "startStop"
-round0key = "round0"
-round1key = "round1"
+round0key = "rounds0"
+round1key = "rounds1"
 
 from django.shortcuts import render
 
