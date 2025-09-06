@@ -5,8 +5,8 @@ import time
 from collections import deque  # For moving average
 
 # Configuration Constants
-LANE0_MULTIPLICATOR = 0.7  # Reduces the rapid increase of speed for bike 0
-LANE1_MULTIPLICATOR = 0.4  # Reduces the rapid increase of speed for bike 1
+LANE0_MULTIPLICATOR = 0.4  # Reduces the rapid increase of speed for bike 0
+LANE1_MULTIPLICATOR = 0.65  # Reduces the rapid increase of speed for bike 1
 SPEED_LIMIT = 50
 DEBOUNCE_TIME = 0.1  # Minimum time between pulses in seconds
 
@@ -48,9 +48,9 @@ GPIO.setup(PIN_BIKE0, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(PIN_BIKE1, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 GPIO.setup(IR_SENSOR0, GPIO.IN)
 GPIO.setup(IR_SENSOR1, GPIO.IN)
-lane0 = GPIO.PWM(PIN_LANE0, 50)  # Frequency=50Hz
+lane0 = GPIO.PWM(PIN_LANE0, 120)  # Frequency=200Hz
 lane0.start(0)  # Initialize with no speed
-lane1 = GPIO.PWM(PIN_LANE1, 50)  # Frequency=50Hz
+lane1 = GPIO.PWM(PIN_LANE1, 120)  # Frequency=200Hz
 lane1.start(0)  # Initialize with no speed
 
 # Redis Connection
@@ -99,14 +99,16 @@ def bike1_callback(channel):
         #print("Bike 1 speed updated:", lane1_bike_speed)
 
 def ir0_callback(channel):
+    global rounds0
     if GPIO.input(channel):
         rounds0 -= 1
-        print("IR0-Signal erkannt!")
+        set_redis("rounds0", rounds0)
 
 def ir1_callback(channel):
+    global rounds1
     if GPIO.input(channel):
         rounds1 -= 1
-        print("IR1-Signal erkannt!")
+        set_redis("rounds1", rounds1)
 
 def set_redis(key, value):
     """Set value in Redis."""
@@ -135,8 +137,8 @@ try:
         if rstart_stop == "pause":
             lane0.ChangeDutyCycle(0)  # Geschwindigkeit auf 0 setzen
             lane1.ChangeDutyCycle(0)
-            rounds0 = get_redis("rounds0")
-            rounds1 = get_redis("rounds1")
+            rounds0 = get_redis("rounds")
+            rounds1 = get_redis("rounds")
             continue
 
         # Handle deceleration

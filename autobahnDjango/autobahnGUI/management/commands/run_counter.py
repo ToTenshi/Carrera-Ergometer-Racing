@@ -22,11 +22,11 @@ class Command(BaseCommand):
                 speed1 = speed1.decode("utf-8")
 
             # Neue Rundenwerte aus Redis holen
-            round0 = r.get("round0")
+            round0 = r.get("rounds0")
             if round0 is not None:
                 round0 = round0.decode("utf-8")
 
-            round1 = r.get("round1")
+            round1 = r.get("rounds1")
             if round1 is not None:
                 round1 = round1.decode("utf-8")
 
